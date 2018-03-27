@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"fmt"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/tzngit/go-sh"
 	"io/ioutil"
 	"log"
@@ -67,7 +67,7 @@ func ExecCmd(success string, cmd string, args ...string) (error, string) {
 	cmdstr = cmd + " " + cmdstr
 	if err != nil {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
-		return err, err.Error()
+		return err, output
 	}
 	if success != "" && !strings.Contains(output, success) {
 		return errors.New("no success flag found"), output
@@ -87,7 +87,7 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 	cmdstr = cmd + " " + cmdstr
 	if err != nil {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
-		return err, err.Error()
+		return err, output
 	}
 
 	if len(successFlag) > 0 {
