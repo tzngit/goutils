@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"encoding/json"
 	"errors"
-	"github.com/codeskyblue/go-sh"
+	"github.com/tzngit/go-sh"
 	"io/ioutil"
 	"log"
 	"net"
@@ -57,9 +58,10 @@ func File2String(file string) string {
 
 func ExecCmd(success string, cmd string, args ...string) (error, string) {
 	session := sh.NewSession()
-	out, err := session.Command(cmd, args).Output()
-	stdout := string(out)
 	session.ShowCMD = true
+	stdout, stderr, err := session.Command(cmd, args).Output()
+
+	output := fmt.Sprintf("stdout:%s\nstderr:%s\n", string(stdout), string(stderr))
 
 	cmdstr := strings.Join(args, " ")
 	cmdstr = cmd + " " + cmdstr
@@ -67,19 +69,19 @@ func ExecCmd(success string, cmd string, args ...string) (error, string) {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
 		return err, err.Error()
 	}
-	if success != "" && !strings.Contains(stdout, success) {
-		//log.Printf("exec cmd[%s] no success flag!\n%s", cmdstr, stdout)
-		return errors.New("no success flag found"), stdout
+	if success != "" && !strings.Contains(output, success) {
+		return errors.New("no success flag found"), output
 	}
-	return err, stdout
+	return err, output
 }
 
 func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) (error, string) {
 	session := sh.NewSession()
-	session.SetDir(dir)
-	out, err := session.Command(cmd, args).Output()
-	stdout := string(out)
 	session.ShowCMD = true
+	session.SetDir(dir)
+	stdout, stderr, err := session.Command(cmd, args).Output()
+
+	output := fmt.Sprintf("stdout:%s\nstderr:%s\n", string(stdout), string(stderr))
 
 	cmdstr := strings.Join(args, " ")
 	cmdstr = cmd + " " + cmdstr
@@ -90,13 +92,13 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 
 	if len(successFlag) > 0 {
 		for _, str := range successFlag {
-			if !strings.Contains(stdout, str) {
+			if !strings.Contains(output, str) {
 				//log.Printf("exec cmd[%s] no success flag!\n%s", cmdstr, stdout)
-				return errors.New("no success flag found"), stdout
+				return errors.New("no success flag found"), output
 			}
 		}
 	}
-	return err, stdout
+	return err, output
 }
 
 func SavePid(pidFile string) {
