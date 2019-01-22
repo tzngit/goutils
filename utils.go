@@ -92,13 +92,13 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 
 	if len(successFlag) > 0 {
 		for _, str := range successFlag {
-			if !strings.Contains(output, str) {
+			if !strings.Contains(string(stdout), str) {
 				//log.Printf("exec cmd[%s] no success flag!\n%s", cmdstr, stdout)
-				return errors.New("no success flag found"), output
+				return errors.New("no success flag found"), string(stdout)
 			}
 		}
 	}
-	return err, output
+	return err, string(stdout), string(stderr)
 }
 
 func SavePid(pidFile string) {
