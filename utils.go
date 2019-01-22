@@ -87,7 +87,7 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 	cmdstr = cmd + " " + cmdstr
 	if err != nil {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
-		return err, out + "\n" + stderr
+		return err, stdout, stderr
 	}
 
 	if len(successFlag) > 0 {
