@@ -75,30 +75,30 @@ func ExecCmd(success string, cmd string, args ...string) (error, string) {
 	return err, output
 }
 
-func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) (error, string) {
+func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) (error, string, string) {
 	session := sh.NewSession()
 	session.ShowCMD = true
 	session.SetDir(dir)
 	stdout, stderr, err := session.Command(cmd, args).Output()
-
-	output := fmt.Sprintf("stdout:%s\nstderr:%s\n", string(stdout), string(stderr))
+    stdout = string(stdout)
+    stderr = string(stderr)
 
 	cmdstr := strings.Join(args, " ")
 	cmdstr = cmd + " " + cmdstr
 	if err != nil {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
-		return err, output
+		return err, stdout + "\n" + stderr
 	}
 
 	if len(successFlag) > 0 {
 		for _, str := range successFlag {
-			if !strings.Contains(string(stdout), str) {
+			if !strings.Contains(stdout, str) {
 				//log.Printf("exec cmd[%s] no success flag!\n%s", cmdstr, stdout)
-				return errors.New("no success flag found"), string(stdout)
+				return errors.New("no success flag found"), stdout
 			}
 		}
 	}
-	return err, string(stdout), string(stderr)
+	return err, stdout, stderr
 }
 
 func SavePid(pidFile string) {
