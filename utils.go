@@ -79,15 +79,15 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 	session := sh.NewSession()
 	session.ShowCMD = true
 	session.SetDir(dir)
-	stdout, stderr, err := session.Command(cmd, args).Output()
-    stdout = string(stdout)
-    stderr = string(stderr)
+	stdout_b, stderr_b, err := session.Command(cmd, args).Output()
+    stdout := string(stdout_b)
+    stderr := string(stderr_b)
 
 	cmdstr := strings.Join(args, " ")
 	cmdstr = cmd + " " + cmdstr
 	if err != nil {
 		log.Printf("exec cmd[%s] fail! error:\n%s", cmdstr, err.Error())
-		return err, stdout + "\n" + stderr
+		return err, out + "\n" + stderr
 	}
 
 	if len(successFlag) > 0 {
