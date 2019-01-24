@@ -94,7 +94,7 @@ func ExecCmdInDir(successFlag []string, dir string, cmd string, args ...string) 
 		for _, str := range successFlag {
 			if !strings.Contains(stdout, str) {
 				//log.Printf("exec cmd[%s] no success flag!\n%s", cmdstr, stdout)
-				return errors.New("no success flag found"), stdout
+				return errors.New("no success flag found"), stdout, stderr
 			}
 		}
 	}
